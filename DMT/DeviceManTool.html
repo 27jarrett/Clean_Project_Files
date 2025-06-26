@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Device Management Tool</title> <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.muicss.com/mui-0.10.3/css/mui.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        /* Variables */
+        /* Variables */
+        :root {
+            --primary-color: #4a90e2;
+            --accent-color: #ff6e40;
+            --error-color: #d32f2f;
+            --success-color: #4caf50;
+            --light-bg: #f5f7fa;
+            --light-container: #ffffff;
+            --dark-bg: #121212;
+            --dark-container: #1e1e1e;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        /* Base Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background-color: var(--light-bg);
+            color: #333;
+            transition: var(--transition);
+        }
+
+        body.theme-dark {
+            background-color: var(--dark-bg);
+            color: #e0e0e0;
+        }
+
+        /* Container */
+        .mui-container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--light-container);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .theme-dark .mui-container {
+            background-color: var(--dark-container);
+        }
+
+        /* Typography */
+        h2,
+        h4 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Form Elements */
+        .mui-textfield {
+            margin-bottom: 1rem;
+        }
+
+        .mui-textfield input,
+        .mui-textfield textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            min-height: 52px;
+            box-sizing: border-box;
+        }
+
+        .mui-textfield input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        /* Dark Theme Form Elements */
+        .theme-dark input,
+        .theme-dark textarea,
+        .theme-dark select {
+            background-color: #2b2b2b !important;
+            color: #fff !important;
+            border-color: #444 !important;
+        }
+
+        .theme-dark label,
+        .theme-dark #auth-status,
+        .theme-dark #update-status,
+        .theme-dark .mui-btn--flat.mui--text-dark {
+            color: #ddd !important;
+        }
+
+        /* Buttons */
+        .mui-btn {
+            border-radius: var(--border-radius);
+            text-transform: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .mui-btn--raised.mui-btn--primary {
+            background-color: var(--primary-color);
+        }
+
+        .mui-btn--raised.mui-btn--primary:hover {
+            background-color: #357abd;
+        }
+
+        .mui-btn--raised.mui-btn--accent {
+            background-color: var(--accent-color);
+        }
+
+        .mui-btn--raised.mui-btn--accent:hover {
+            background-color: #e0602d;
+        }
+
+        .remove-btn {
+            background-color: var(--error-color);
+            color: white;
+            padding: 0.5rem 0.8rem;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .remove-btn:hover {
+            background-color: #c62828;
+        }
+
+        .add-btn {
+            margin: 10px 0 15px;
+        }
+
+        /* IMEI Row */
+        .imei-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .imei-row input {
+            flex: 1;
+            padding: 0.6rem;
+            font-size: 0.95rem;
+        }
+
+        .imei-row .remove-btn {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 36px;
+            width: 36px;
+            min-width: 36px;
+            padding: 0;
+        }
+
+        /* Status Messages */
+        #auth-status,
+        #update-status {
+            margin-top: 10px;
+            font-weight: 500;
+            padding: 8px;
+            border-radius: var(--border-radius);
+        }
+
+        .success,
+        #auth-status.success,
+        #update-status.success {
+            color: var(--success-color);
+        }
+
+        .error,
+        #auth-status.error,
+        #update-status.error {
+            color: var(--error-color);
+        }
+
+        /* Toggle Container */
+        .toggle-container {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            opacity: 0.7;
+            transition: var(--transition);
+        }
+
+        .tab-button.active {
+            opacity: 1;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Generator Controls */
+        .generator-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .generator-controls .mui-select,
+        .generator-controls .mui-textfield {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        /* Random String Display */
+        .random-string-display {
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            word-break: break-word;
+            text-align: center;
+            font-family: monospace;
+            font-size: 18px;
+            position: relative;
+            border: 1px solid #ddd;
+        }
+
+        .copy-button {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* Dividers and Sections */
+        hr {
+            margin: 2rem 0;
+            border: 0;
+            height: 1px;
+            background-color: #ddd;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+        }
+
+        /* CSV Template */
+        .csv-template {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .csv-template code {
+            padding: 2px 6px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        /* Preview Container */
+        .preview-container {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            padding: 10px;
+            margin-top: 15px;
+        }
+
+        .preview-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .preview-table th,
+        .preview-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .preview-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .preview-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Dark Mode Overrides */
+        .theme-dark .tabs {
+            border-bottom-color: #444;
+        }
+
+        .theme-dark .tab-button {
+            color: #eee;
+        }
+
+        .theme-dark .tab-button.active {
+            background-color: #333;
+            border-bottom: 2px solid #fff;
+        }
+
+        .theme-dark .random-string-display,
+        .theme-dark .csv-template {
+            background-color: #2b2b2b;
+            border-color: #444;
+        }
+
+        .theme-dark .csv-template code {
+            background-color: #444;
+        }
+
+        .theme-dark hr {
+            background-color: #444;
+        }
+
+        .theme-dark .preview-container {
+            border-color: #444;
+        }
+
+        .theme-dark .preview-table th {
+            background-color: #333;
+        }
+
+        .theme-dark .preview-table td,
+        .theme-dark .preview-table th {
+            border-bottom-color: #444;
+        }
+
+        .theme-dark .preview-table tr:nth-child(even) {
+            background-color: #2a2a2a;
+        }
+
+        .theme-dark #download-template {
+            background-color: #2b2b2b;
+            color: #fff;
+            border: 1px solid #444;
+        }
+
+        .theme-dark #download-template:hover {
+            background-color: #3a3a3a;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 600px) {
+            .imei-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .imei-row input,
+            .imei-row .remove-btn {
+                width: 100%;
+            }
+
+            .imei-row .remove-btn {
+                height: auto;
+                margin-top: 5px;
+            }
+
+            .generator-controls {
+                flex-direction: column;
+            }
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mui-container">
+        <h2>Device Management Tool</h2> <div class="tabs">
+            <button class="tab-button active" data-tab="imei-updater">IMEI Updater</button>
+            <button class="tab-button" data-tab="bulk-operations">Bulk Operations</button>
+            <button class="tab-button" data-tab="string-generator">String Generator</button>
+            <button class="tab-button" data-tab="qr-generator">QR Code Generator</button>
+            <button class="tab-button" data-tab="factory-reset">Factory Reset</button>
+        </div>
+
+        <div id="imei-updater" class="tab-content active">
+            <div class="section">
+                <h4>👤 Authentication</h4>
+                <div class="mui-textfield">
+                    <input type="text" id="email" placeholder="Email" />
+                </div>
+                <div class="mui-textfield">
+                    <input type="password" id="password" placeholder="Password" />
+                </div>
+                <button class="mui-btn mui-btn--raised mui-btn--primary" onclick="authenticateUser()">Authenticate</button>
+                <div id="auth-status"></div>
+                <p style="font-size: 0.8em; color: #888;">
+                    <em>Note: For demonstration purposes, this section simulates authentication. In a real application, you would use secure environment variables or an OAuth flow for API access.</em>
+                </p>
+            </div>
+
+            <hr />
+
+            <div class="section">
+                <h4>🔄 IMEI / Device Name Mapping</h4>
+                <div id="imei-container"></div>
+                <button class="mui-btn mui-btn--flat mui--text-dark add-btn" onclick="addImeiRow()">➕ Add Device</button>
+                <button class="mui-btn mui-btn--raised mui-btn--accent" onclick="updateDevices()">Update Devices</button>
+                <div id="update-status"></div>
+            </div>
+        </div>
+
+        <div id="factory-reset" class="tab-content">
+            <div class="section">
+                <h4>🧨 Factory Reset Device</h4>
+                <div class="mui-textfield">
+                    <input type="text" id="factory-reset-imei" placeholder="Enter IMEI" />
+                </div>
+                <button class="mui-btn mui-btn--raised mui-btn--danger" onclick="confirmFactoryReset()">Send Factory Reset</button>
+                <div id="factory-reset-status"></div>
+            </div>
+        </div>
+
+        <div id="string-generator" class="tab-content">
+            <h4>🔑 Random String Generator</h4>
+
+            <div class="generator-controls">
+                <div class="mui-select">
+                    <label for="string-type">String Type</label>
+                    <select id="string-type">
+                        <option value="alphanumeric">Alphanumeric</option>
+                        <option value="alphabetic">Alphabetic</option>
+                        <option value="numeric">Numeric</option>
+                        <option value="hex">Hexadecimal</option>
+                        <option value="special">With Special Chars</option>
+                    </select>
+                </div>
+
+                <div class="mui-textfield">
+                    <input type="number" id="string-length" min="4" max="64" value="16" />
+                    <label>Length</label>
+                </div>
+
+                <button class="mui-btn mui-btn--raised mui-btn--primary" onclick="generateRandomString()">Generate</button>
+            </div>
+
+            <div class="random-string-display" id="random-string">
+                Click Generate to create a random string
+                <button class="copy-button" onclick="copyToClipboard()">Copy</button>
+            </div>
+        </div>
+
+        <div id="qr-generator" class="tab-content">
+            <h4>📱 QR Code Generator</h4>
+
+            <p style="font-size: 14px; color: #555;">
+                To generate a QR code, you'll need a unique identifier.
+                <br>This tool is designed to demonstrate QR code generation for device identification.
+                <br>Enter any unique ID below to generate its corresponding QR code.
+            </p>
+
+            <div class="mui-textfield">
+                <input type="text" id="qr-input" placeholder="Enter text for QR Code" />
+            </div>
+
+            <button class="mui-btn mui-btn--raised mui-btn--primary" onclick="generateQRCode()">Generate QR Code</button>
+            <div id="qr-code-container" style="margin-top: 20px;"></div>
+        </div>
+
+        <div id="bulk-operations" class="tab-content">
+            <h4>📋 Bulk Import</h4>
+
+            <div class="section">
+                <h5>📥 Import Devices</h5>
+                <p>Upload a CSV file with IMEI and device name columns.</p>
+                <div class="mui-textfield">
+                    <input type="file" id="csv-file-input" accept=".csv" />
+                </div>
+
+                <div class="csv-template">
+                    <strong>CSV Format:</strong>
+                    <code>IMEI,DeviceName</code>
+                    <button id="download-template" class="mui-btn mui-btn--small mui-btn--flat"
+                        onclick="downloadTemplateCSV()">Download Template</button>
+                </div>
+
+                <button class="mui-btn mui-btn--raised mui-btn--accent" onclick="importDevices()">Import Devices</button>
+                <div id="import-status"></div>
+            </div>
+
+            <hr>
+
+            <div class="section">
+                <h5>🔄 Preview Import Data</h5>
+                <div class="preview-container" id="csv-preview">
+                    <p>CSV data will be previewed here</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="toggle-container">
+            <label for="dark-mode-toggle" style="margin-right: 10px;">🌙 Dark Mode</label>
+            <label class="mui-switch">
+                <input type="checkbox" id="dark-mode-toggle">
+                <span class="mui-switch-track"></span>
+            </label>
+        </div>
+    </div>
+</body>
+
+    <script>
+// Constants for DOM elements
+const imeiContainer = document.getElementById('imei-container');
+const updateStatus = document.getElementById('update-status');
+const authStatus = document.getElementById('auth-status');
+const body = document.body;
+const tabButtons = document.querySelectorAll('.tab-button');
+const tabContents = document.querySelectorAll('.tab-content');
+const randomStringDisplay = document.getElementById('random-string');
+const csvFileInput = document.getElementById('csv-file-input');
+const csvPreview = document.getElementById('csv-preview');
+const importStatus = document.getElementById('import-status');
+
+// Generalized API Endpoint Placeholders
+// IMPORTANT: For a live demonstration, you would replace these with public API endpoints
+// that you have access to, or mock API responses for a static demo.
+// DO NOT use your company's actual API endpoints here if this code goes public.
+const API_BASE_URL = "https://api.example.com/v2"; // Placeholder for API base URL
+const QR_CODE_BASE_URL = "https://your-public-facing-app.example.com/device?id="; // Placeholder for QR code base URL
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    body.addEventListener('change', (event) => {
+        if (event.target.id === 'dark-mode-toggle') {
+            body.classList.toggle('theme-dark', event.target.checked);
+        } else if (event.target.id === 'csv-file-input') {
+            // Functionality to preview CSV is not included in this sanitized version
+            // as it would require a CSV parsing library and is not core to the sensitive data removal.
+            // You can add this back if you have a non-sensitive implementation.
+            console.warn("CSV preview functionality is not implemented in this sanitized version.");
+            csvPreview.innerHTML = "<p>CSV data preview is disabled in this demo.</p>";
+        }
+    });
+
+    addImeiRow();
+    setupTabs();
+});
+
+function setupTabs() {
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const tabId = button.getAttribute('data-tab');
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            button.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+}
+
+function addImeiRow() {
+    const row = document.createElement('div');
+    row.className = 'imei-row';
+    row.innerHTML = `
+        <input type="text" placeholder="IMEI" class="mui-textfield imei-input" />
+        <input type="text" placeholder="Device Name" class="mui-textfield name-input" />
+        <button class="mui-btn remove-btn" onclick="this.parentElement.remove()">❌</button>
+    `;
+    imeiContainer.appendChild(row);
+}
+
+// Simulated authentication function
+// In a real application, you would integrate with a secure authentication provider (e.g., OAuth, JWT).
+// Hardcoding credentials or directly sending them from client-side JavaScript is insecure for production.
+async function authenticateUser() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    authStatus.textContent = 'Authenticating... (Simulated)';
+    authStatus.className = '';
+
+    // Simulate API call
+    if (email === "demo@example.com" && password === "password123") { // Use generic demo credentials
+        // Simulate a successful response with a dummy token
+        localStorage.setItem('authToken', 'YOUR_DEMO_AUTH_TOKEN');
+        authStatus.textContent = '✅ Authentication successful! (Simulated)';
+        authStatus.className = 'success';
+    } else {
+        authStatus.textContent = '❌ Authentication failed. (Simulated)';
+        authStatus.className = 'error';
+    }
+    // Original fetch commented out:
+    /*
+    try {
+        const response = await fetch(`${API_BASE_URL}/authenticate/`, { // Use generalized API_BASE_URL
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+
+        if (!response.ok) throw new Error('Authentication failed');
+
+        const data = await response.json();
+        localStorage.setItem('authToken', data.token);
+
+        authStatus.textContent = '✅ Authentication successful!';
+        authStatus.className = 'success';
+    } catch (err) {
+        authStatus.textContent = `❌ ${err.message}`;
+        authStatus.className = 'error';
+    }
+    */
+}
+
+function validateImei(imei) {
+    if (!/^\d{15}$/.test(imei)) return false;
+
+    let sum = 0;
+    for (let i = 0; i < 15; i++) {
+        let digit = parseInt(imei.charAt(i), 10);
+        if (i % 2 === 1) digit *= 2;
+        if (digit > 9) digit -= 9;
+        sum += digit;
+    }
+    return sum % 10 === 0;
+}
+
+// Simulated device update function
+// This function will now only log the intended action and parameters,
+// rather than making a call to a private API.
+async function updateDevices() {
+    const token = localStorage.getItem('authToken');
+    updateStatus.innerHTML = '';
+    updateStatus.className = '';
+
+    if (!token || token === 'YOUR_DEMO_AUTH_TOKEN') { // Check for dummy token
+        updateStatus.textContent = '❌ Authentication required or using demo token. Cannot make live API calls.';
+        updateStatus.className = 'error';
+        return;
+    }
+
+    const imeiInputs = document.querySelectorAll('.imei-input');
+    const nameInputs = document.querySelectorAll('.name-input');
+
+    let allSuccessful = true;
+    for (let i = 0; i < imeiInputs.length; i++) {
+        const imei = imeiInputs[i].value.trim();
+        const name = nameInputs[i].value.trim();
+
+        if (!imei || !name) {
+            updateStatus.innerHTML += `⚠️ Row ${i + 1}: IMEI or Name missing<br/>`;
+            allSuccessful = false;
+            continue;
+        }
+
+        if (!validateImei(imei)) {
+            updateStatus.innerHTML += `⚠️ Row ${i + 1}: Invalid IMEI format<br/>`;
+            allSuccessful = false;
+            continue;
+        }
+
+        // Simulate API call for device update
+        console.log(`Simulating PATCH request to ${API_BASE_URL}/devices/${imei} with name: ${name}`);
+        updateStatus.innerHTML += `✅ Row ${i + 1}: Update simulated successfully (IMEI: ${imei}, Name: ${name})<br/>`;
+
+        // Original fetch commented out:
+        /*
+        try {
+            const resp = await fetch(`${API_BASE_URL}/devices/${imei}`, { // Use generalized API_BASE_URL
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ name }),
+            });
+
+            updateStatus.innerHTML += resp.ok
+                ? `✅ Row ${i + 1}: Updated successfully<br/>`
+                : `❌ Row ${i + 1}: Update failed<br/>`;
+        } catch (err) {
+            updateStatus.innerHTML += `❌ Row ${i + 1}: ${err.message}<br/>`;
+            allSuccessful = false;
+        }
+        */
+    }
+    if (allSuccessful) {
+        updateStatus.innerHTML = '✅ All simulated updates processed.';
+        updateStatus.className = 'success';
+    } else {
+        updateStatus.innerHTML = '⚠️ Some updates failed or were skipped (Simulated). See details above.';
+        updateStatus.className = 'error';
+    }
+}
+
+function generateRandomString() {
+    const type = document.getElementById('string-type').value;
+    const length = parseInt(document.getElementById('string-length').value, 10);
+    const charSets = {
+        alphabetic: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
+        numeric: '0123456789',
+        alphanumeric: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
+        hex: '0123456789ABCDEF',
+        special: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+'
+    };
+
+    const characters = charSets[type] || charSets.alphanumeric;
+    let result = Array.from({ length }, () => characters[Math.floor(Math.random() * characters.length)]).join('');
+
+    randomStringDisplay.innerHTML = `${result} <button class="copy-button" onclick="copyToClipboard()">Copy</button>`;
+}
+
+function copyToClipboard() {
+    const text = randomStringDisplay.textContent.replace('Copy', '').trim();
+    navigator.clipboard.writeText(text).then(() => alert('Copied to clipboard!'));
+}
+
+function downloadTemplateCSV() {
+    const csvContent = "data:text/csv;charset=utf-8,IMEI,Device Name\n";
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "imei_template.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function generateQRCode() {
+    const userInput = document.getElementById('qr-input').value;
+    const qrContainer = document.getElementById('qr-code-container');
+
+    qrContainer.innerHTML = '';
+
+    if (!userInput) {
+        alert('Please enter some text to generate a QR code!');
+        return;
+    }
+
+    // Generate QR code with generalized URL
+    new QRCode(qrContainer, {
+        text: QR_CODE_BASE_URL + userInput, // Use generalized QR_CODE_BASE_URL
+        width: 128,
+        height: 128
+    });
+}
+
+function confirmFactoryReset() {
+    const imei = document.getElementById('factory-reset-imei').value.trim();
+    const statusDiv = document.getElementById('factory-reset-status');
+    statusDiv.textContent = '';
+    statusDiv.className = '';
+
+    if (!validateImei(imei)) {
+        statusDiv.textContent = '❌ Invalid IMEI format.';
+        statusDiv.className = 'error';
+        return;
+    }
+
+    if (!localStorage.getItem('authToken') || localStorage.getItem('authToken') === 'YOUR_DEMO_AUTH_TOKEN') {
+        statusDiv.textContent = '❌ Authentication required or using demo token. Cannot send live factory reset.';
+        statusDiv.className = 'error';
+        return;
+    }
+
+    const confirmed = confirm(`⚠️ Are you sure you want to send a factory reset to IMEI: ${imei}?\n\nThis action cannot be undone.\nMake sure the device is powered on and connected.`);
+    if (confirmed) sendFactoryReset(imei);
+}
+
+// Simulated factory reset function
+async function sendFactoryReset(imei) {
+    const token = localStorage.getItem('authToken');
+    const statusDiv = document.getElementById('factory-reset-status');
+
+    statusDiv.textContent = 'Sending reset request... (Simulated)';
+    statusDiv.className = '';
+
+    // Simulate API call for factory reset
+    console.log(`Simulating POST request to ${API_BASE_URL}/devices/${imei}/factory-reset`);
+    statusDiv.textContent = '✅ Factory reset command simulated successfully.';
+    statusDiv.className = 'success';
+
+    // Original fetch commented out:
+    /*
+    try {
+        const resp = await fetch(`${API_BASE_URL}/devices/${imei}/factory-reset`, { // Use generalized API_BASE_URL
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}` }
+        });
+
+        const result = await resp.text();
+
+        if (!resp.ok) throw new Error(`Server responded with status ${resp.status}: ${result}`);
+
+        statusDiv.textContent = '✅ Factory reset command sent successfully.';
+        statusDiv.className = 'success';
+    } catch (err) {
+        statusDiv.textContent = `❌ Error: ${err.message}`;
+        statusDiv.className = 'error';
+    }
+    */
+}
+
+// Placeholder for CSV preview function. This was removed because it often relies
+// on complex parsing logic and potentially sensitive file operations.
+// You can re-implement this if you have a non-sensitive way to display CSV data.
+function previewCSV(event) {
+    const file = event.target.files[0];
+    if (file) {
+        // Here you would typically read the file and parse CSV,
+        // then display it in the #csv-preview div.
+        // For public demo, this is often skipped or replaced with static example data.
+        console.log("CSV file selected:", file.name);
+        csvPreview.innerHTML = `<p>File selected: <strong>${file.name}</strong>. Preview functionality is simulated/disabled for security.</p>`;
+    } else {
+        csvPreview.innerHTML = "<p>CSV data will be previewed here</p>";
+    }
+}
+
+// Placeholder for importDevices function.
+// This function would typically send the parsed CSV data to a backend API.
+// For a public demo, it should be simulated or show a placeholder message.
+async function importDevices() {
+    importStatus.textContent = 'Importing devices... (Simulated)';
+    importStatus.className = '';
+
+    const fileInput = document.getElementById('csv-file-input');
+    if (!fileInput.files.length) {
+        importStatus.textContent = '❌ No CSV file selected.';
+        importStatus.className = 'error';
+        return;
+    }
+
+    // Simulate processing the file
+    console.log("Simulating bulk import for file:", fileInput.files[0].name);
+    importStatus.textContent = '✅ Bulk import simulated successfully.';
+    importStatus.className = 'success';
+
+    // Original fetch/upload logic commented out
+    /*
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        importStatus.textContent = '❌ Please authenticate first.';
+        importStatus.className = 'error';
+        return;
+    }
+    // ... actual CSV parsing and API call logic here ...
+    */
+}
+
+    </script>
+</html>
