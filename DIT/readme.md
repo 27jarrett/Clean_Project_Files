@@ -39,6 +39,8 @@ This project, in its original form, handled sensitive company data, interacted w
 
 This thorough sanitization allows the project to be shared publicly, demonstrating your technical capabilities while adhering to strict security and confidentiality practices.
 
+<img src="https://github.com/27jarrett/Clean_Project_Files/blob/main/DIT/assets/Screenshot.png">
+
 ## ▶️ How to Run Locally
 
 To get this application running on your local machine:
@@ -112,7 +114,3 @@ If you wish to demonstrate the VBA integration:
 * **Cross-Platform Playwright:** Configure Playwright to support different browsers (Chromium, Firefox, WebKit).
 * **Error Reporting:** Implement a more robust error reporting mechanism (e.g., logging to a file with rotation, sending error notifications).
 * **Automated Testing:** Develop unit tests for Python modules and integration tests for the full workflow.
-
----
-
-Feel free to customize this README further to highlight specific aspects of your contributions or any additional features you want to emphasize!
