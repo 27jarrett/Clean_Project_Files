@@ -73,7 +73,3 @@ To run this project locally and explore its features:
 * **Modularization:** Further break down the `main` function and other large functions into smaller, more focused modules or classes.
 * **Comprehensive Testing:** Add unit tests for individual functions and integration tests for the overall flow.
 * **Mocking Framework:** Use a dedicated Python mocking library (e.g., `unittest.mock`) for more sophisticated simulation of API responses during testing.
-
----
-
-Feel free to customize this README to further highlight your specific contributions or any additional features you want to emphasize!
