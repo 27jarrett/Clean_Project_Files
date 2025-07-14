@@ -67,7 +67,3 @@ To run this project locally and explore its features:
 * **Email Content Analysis:** Add features to analyze email subjects or bodies for keywords before processing attachments.
 * **GUI:** Develop a simple graphical user interface (GUI) using libraries like `Tkinter` or `PyQt` for easier interaction.
 * **Scheduling:** Integrate with Windows Task Scheduler or Python's `APScheduler` for automated, timed execution.
-
----
-
-Feel free to customize this README further to highlight specific aspects of your contributions or any additional features you want to emphasize!
