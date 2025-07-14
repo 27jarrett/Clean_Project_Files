@@ -54,7 +54,3 @@ To run this project locally and explore its features:
 * Expand error handling and user feedback.
 * Add unit and integration tests.
 * Refactor the JavaScript into modules for better organization.
-
----
-
-Feel free to customize this README further to highlight specific aspects of your contributions or any additional features you want to emphasize!
