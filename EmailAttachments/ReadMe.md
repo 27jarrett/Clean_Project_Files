@@ -38,7 +38,7 @@ To run this project locally and explore its features:
 
 1.  **Clone the repository** (once you upload it to GitHub):
     ```bash
-    git clone [https://github.com/YourUsername/outlook-attachment-scraper.git](https://github.com/YourUsername/outlook-attachment-scraper.git)
+    git clone [https://github.com/27jarrett/outlook-attachment-scraper.git](https://github.com/YourUsername/outlook-attachment-scraper.git)
     ```
 2.  **Navigate to the project directory:**
     ```bash
