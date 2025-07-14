@@ -39,7 +39,7 @@ To run this project locally and explore its features:
 
 1.  **Clone the repository** (once you upload it to GitHub):
     ```bash
-    git clone [https://github.com/YourUsername/device-management-tool.git](https://github.com/YourUsername/device-management-tool.git)
+    git clone [https://github.com/27jarrett/device-management-tool.git](https://github.com/YourUsername/device-management-tool.git)
     ```
 2.  **Navigate to the project directory:**
     ```bash
